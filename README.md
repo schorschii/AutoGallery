@@ -1,5 +1,5 @@
-# Autogallery
-Autogallery is a simple PHP web app for presenting images and videos with some special features.
+# AutoGallery
+AutoGallery is a simple PHP web app for presenting images and videos with some special features.
 
 ## Features
 - images
