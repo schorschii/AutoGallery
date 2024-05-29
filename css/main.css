@@ -242,10 +242,7 @@ input, textarea, select, button {
 	.photos .video-item,
 	.photos .file-item,
 	.photos .dir-item {
-		background-color: rgb(25,25,25);
-	}
-	.photos .dir-item {
-		background: rgb(60,60,60);
+		background-color: rgb(30,30,30);
 	}
 	#lightboxBack {
 		background-color: rgba(0,0,0,0.8);
