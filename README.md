@@ -1,18 +1,22 @@
 # AutoGallery
-AutoGallery is a simple PHP web app for presenting images and videos with some special features.
+AutoGallery is a simple PHP web app for presenting images, videos and other files with some special features.
 
 ## Features
 - images
   - optional display of IPTC fields
-  - lightbox with slideshow
+  - lightbox with slideshow, fullscreen & download option
 - videos
   - display chapters and subtitles
+- nice 3D effect on mouse hover
 - optional password protection
 - dark mode
 
+![Gallery](.github/gallery.png)
+![Lightbox](.github/lightbox.png)
+
 ## Installation
 1. Copy all files onto your web server.
-2. Copy your files (images, videos and other files, optional with sub-directories) into the `media` dir.
+2. Copy your files (images, videos and other files; sub-directories possible) into the `media` dir.
 3. Optional: change values in `conf.php`
    - change gallery title in `const TITLE`
    - set a password in `const PASSWORD`
