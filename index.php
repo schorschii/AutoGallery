@@ -78,6 +78,9 @@ function startsWith( $haystack, $needle ) {
 		<h1><?php echo htmlspecialchars($folderTitle); ?></h1>
 
 		<div id='gallery' class='photos'>
+			<?php if(empty($dirs) && empty($photos)) { ?>
+				<div id='galleryempty'>This directory is empty.</div>
+			<?php } ?>
 			<?php foreach($dirs as $dir) { ?>
 				<a class='dir-item' href='?dir=<?php echo urlencode($dir['path']); ?>'>
 					<img src='img/folder.svg'>
