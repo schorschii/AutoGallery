@@ -3,7 +3,7 @@
 /*
 	Define the gallery title here.
 */
-const TITLE = 'Galerie';
+const TITLE = 'Gallery';
 
 /*
 	Define the view password here.
@@ -11,13 +11,13 @@ const TITLE = 'Galerie';
 const PASSWORD = '';
 
 /*
-	Define the photo root dir here.
+	Define the photo/video files root dir path here.
 */
 const ROOT_DIR = 'media';
 
 /*
 	Define what should be displayed as image title and subtile.
-	Enter the ID of a IPTC tag to display the IPTC field value, e.g. '2#120'.
+	Enter the ID of an IPTC tag to display the IPTC field value, e.g. '2#120' for the Caption.
 	Leave PHOTO_TITLE empty to display the file name.
 	Possible IPTC fields:
 		2#005 -> DocumentTitle
