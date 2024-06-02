@@ -43,6 +43,19 @@ document.addEventListener('mousemove', function() {
 	mouseMoveTimeout = setTimeout(function(e){ lightboxControls.classList.remove('visible'); }, 2000);
 });
 
+function formatSeconds(totalSeconds) {
+	hours = Math.floor(totalSeconds / 3600);
+	totalSeconds %= 3600;
+	minutes = Math.floor(totalSeconds / 60);
+	seconds = Math.round(totalSeconds % 60); // Math.round() for mobile Safari, the new Internet Explorer...
+	return pad(hours,1)+':'+pad(minutes,2)+':'+pad(seconds,2);
+}
+function pad(num, size) {
+	num = num.toString();
+	while (num.length < size) num = '0' + num;
+	return num;
+}
+
 function lightboxShow(element) {
 	if(lightboxSlides.length > 1) {
 		btnLightboxNext.classList.remove('hidden');
@@ -65,30 +78,13 @@ function lightboxShow(element) {
 	}
 
 	let viewportOffset = element.getBoundingClientRect();
-	maximizeElement.style.top = viewportOffset.top+'px';
-	maximizeElement.style.left = viewportOffset.left+'px';
-	maximizeElement.style.width = viewportOffset.width+'px';
-	maximizeElement.style.height = viewportOffset.height+'px';
-
 	maximizeElement.animate(
 		[
+			{ top:viewportOffset.top+'px', left:viewportOffset.left+'px', width:viewportOffset.width+'px', height:viewportOffset.height+'px' },
 			{ top:'calc(var(--lightboxpad) * 2)', left:'var(--lightboxpad)', width:'calc(100% - (var(--lightboxpad) * 2))', height:'calc(100% - (var(--lightboxpad) * 3))' },
 		],
 		{ duration: LIGHTBOX_ANIM_DURATION, easing: 'ease-in-out' }
-	).onfinish = (event) => {
-		let top = 'calc(var(--lightboxpad) * 2)';
-		let left = 'var(--lightboxpad)';
-		let width = 'calc(100% - (var(--lightboxpad) * 2))';
-		let height = 'calc(100% - (var(--lightboxpad) * 3))';
-		lightboxVideo.style.top = top;
-		lightboxVideo.style.left = left;
-		lightboxVideo.style.width = width;
-		lightboxVideo.style.height = height;
-		lightboxImg.style.top = top;
-		lightboxImg.style.left = left;
-		lightboxImg.style.width = width;
-		lightboxImg.style.height = height;
-	};
+	);
 	maximizeElement.animate(
 		[
 			{ opacity: '0' },
@@ -152,6 +148,8 @@ function lightboxClose() {
 }
 
 function lightboxNext(step) {
+	lightboxVideo.pause();
+
 	if(lightboxSlideIndex + step >= lightboxSlides.length) {
 		// jump to first if next btn clicked on last element
 		lightboxSlideIndex = 0;
@@ -163,26 +161,54 @@ function lightboxNext(step) {
 		lightboxSlideIndex += step;
 	}
 
-	// setup dowload btn
+	// setup download btn
 	btnLightboxDownload.href = lightboxSlides[lightboxSlideIndex].src;
 	btnLightboxDownload.download = lightboxSlides[lightboxSlideIndex].getAttribute('media_title');
 
 	// setup video or img element
 	if(lightboxSlides[lightboxSlideIndex].tagName == 'VIDEO') {
-		lightboxVideo.classList.remove('hidden');
-		lightboxImg.classList.add('hidden');
-		lightboxVideo.src = lightboxSlides[lightboxSlideIndex].src;
 		// remove prev text tracks
-		var elements = lightboxVideo.querySelectorAll('track');
-		for(i = 0; i < elements.length; i ++) {
-			elements[i].remove();
-		}
+		// creating a new video element is necessary for Firefox
+		let element = document.getElementById('lightboxVideo');
+		if(element) element.remove();
+		element = document.createElement('VIDEO');
+		element.id = 'lightboxVideo';
+		element.controls = true;
+		element.addEventListener('loadeddata', function(){
+			for(var i=0; i<lightboxVideo.textTracks.length; i++) {
+				if(lightboxVideo.textTracks[i].kind != 'chapters') continue;
+				for(var n=0; n<lightboxVideo.textTracks[i].cues.length; n++) {
+					//console.log(lightboxVideo.textTracks[i].cues[n]);
+					let cuePoint = lightboxVideo.textTracks[i].cues[n];
+					let btn = document.createElement('A');
+					btn.classList.add('chapter');
+					let spnTime = document.createElement('SPAN');
+					spnTime.classList.add('time');
+					spnTime.innerText = formatSeconds(cuePoint.startTime);
+					let spnText = document.createElement('SPAN');
+					spnText.innerText = cuePoint.text;
+					btn.appendChild(spnTime);
+					btn.appendChild(spnText);
+					btn.addEventListener('click', function(e){
+						e.preventDefault();
+						lightboxVideo.currentTime = cuePoint.startTime;
+						lightboxVideo.play();
+					});
+					lightboxCaptionText.appendChild(btn);
+				}
+			}
+		});
+		lightbox.insertBefore(element, lightboxCaptionContainer);
 		// add new text tracks
-		var elements = lightboxSlides[lightboxSlideIndex].querySelectorAll('track');
+		let elements = lightboxSlides[lightboxSlideIndex].querySelectorAll('track');
 		for(i = 0; i < elements.length; i ++) {
 			let clone = elements[i].cloneNode();
 			lightboxVideo.appendChild(clone);
 		}
+
+		lightboxVideo.classList.remove('hidden');
+		lightboxImg.classList.add('hidden');
+		lightboxVideo.src = lightboxSlides[lightboxSlideIndex].src;
 	} else {
 		lightboxVideo.classList.add('hidden');
 		lightboxImg.classList.remove('hidden');
@@ -194,8 +220,15 @@ function lightboxNext(step) {
 	lightboxCaptionText.innerText = lightboxSlides[lightboxSlideIndex].getAttribute('media_subtitle');
 }
 
-function lightboxInfo() {
-	lightboxCaptionContainer.classList.toggle('visible');
+function lightboxInfoOpen() {
+	lightboxCaptionContainer.classList.add('visible');
+	btnLightboxInfoOpen.classList.add('hidden');
+	btnLightboxInfoClose.classList.remove('hidden');
+}
+function lightboxInfoClose() {
+	lightboxCaptionContainer.classList.remove('visible');
+	btnLightboxInfoOpen.classList.remove('hidden');
+	btnLightboxInfoClose.classList.add('hidden');
 }
 
 function lightboxFullscreen() {
