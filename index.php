@@ -6,12 +6,23 @@ $photos = [];
 $dirs = [];
 $folderTitle = TITLE;
 $searchPath = ROOT_DIR;
+$pathDepth = 0;
 
-if(!empty($_GET['dir']) && is_dir(ROOT_DIR.'/'.$_GET['dir'])
-&& startsWith(realpath(ROOT_DIR.'/'.$_GET['dir']), realpath(ROOT_DIR))) {
-	$folderTitle = basename($_GET['dir']);
-	$searchPath = ROOT_DIR.'/'.$_GET['dir'];
+// set search path if requested path if it is below ROOT_DIR (avoid path traversal attacks)
+$requestPath = urldecode(trim($_SERVER['PATH_INFO'] ?? null, '/'));
+if(!empty($requestPath)) {
+	if(is_dir(ROOT_DIR.'/'.$requestPath)
+	&& startsWith(realpath(ROOT_DIR.'/'.$requestPath), realpath(ROOT_DIR))) {
+		$folderTitle = basename($requestPath);
+		$searchPath = ROOT_DIR.'/'.$requestPath;
+		$pathDepth = count(explode('/', $requestPath));
+	} else {
+		header('HTTP/1.1 404 NOT FOUND');
+		header('Location: '.$_SERVER['SCRIPT_NAME']);
+	}
 }
+
+// scan dir contents
 $files = scandir($searchPath);
 $ignoreDirs = [];
 foreach($files as $file) {
@@ -59,9 +70,10 @@ foreach($files as $file) {
 		'title' => $file,
 	];
 }
-function startsWith( $haystack, $needle ) {
-	$length = strlen( $needle );
-	return substr( $haystack, 0, $length ) === $needle;
+
+function urlencodePath($path) {
+	$parts = explode('/', $path);
+	return implode('/', array_map('urlencode', $parts));
 }
 ?>
 <!DOCTYPE html>
@@ -69,9 +81,9 @@ function startsWith( $haystack, $needle ) {
 	<head>
 		<meta charset='utf-8'>
 		<title><?php echo htmlspecialchars(TITLE); ?></title>
-		<link rel='stylesheet' href='css/main.css' type='text/css' />
-		<script src='js/3dfx.js'></script>
-		<script src='js/lightbox.js'></script>
+		<link rel='stylesheet' type='text/css' href='<?php echo str_repeat('../', $pathDepth); ?>css/main.css' />
+		<script src='<?php echo str_repeat('../', $pathDepth); ?>js/3dfx.js'></script>
+		<script src='<?php echo str_repeat('../', $pathDepth); ?>js/lightbox.js'></script>
 		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 	</head>
 	<body>
@@ -82,27 +94,28 @@ function startsWith( $haystack, $needle ) {
 				<div id='galleryempty'>This directory is empty.</div>
 			<?php } ?>
 			<?php foreach($dirs as $dir) { ?>
-				<a class='dir-item' href='?dir=<?php echo urlencode($dir['path']); ?>'>
-					<img src='img/folder.svg'>
+				<a class='dir-item' href='<?php echo ($pathDepth==0 ? 'index.php/' : '').urlencodePath($dir['path']); ?>'>
+					<img src='<?php echo str_repeat('../', $pathDepth); ?>img/folder.svg'>
 					<div>
 						<div><?php echo htmlspecialchars($dir['title']); ?></div>
 					</div>
 				</a>
 			<?php } ?>
 			<?php foreach($photos as $photo) { ?>
+				<?php $mediaPath = str_repeat('../', $pathDepth).'media.php/'.urlencodePath($photo['path']); ?>
 				<?php if(startsWith($photo['type'], 'image/')) { ?>
-					<a class='photo-item' href='media.php?file=<?php echo urlencode($photo['path']); ?>'>
-						<img loading='lazy' src='media.php?file=<?php echo urlencode($photo['path']); ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>'>
+					<a class='photo-item' href='<?php echo $mediaPath; ?>'>
+						<img loading='lazy' src='<?php echo $mediaPath; ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>'>
 						<div>
 							<div><?php echo htmlspecialchars($photo['title']); ?></div>
 							<div><?php echo htmlspecialchars($photo['subtitle']); ?></div>
 						</div>
 					</a>
 				<?php } elseif(startsWith($photo['type'], 'video/')) { ?>
-					<a class='video-item' href='media.php?file=<?php echo urlencode($photo['path']); ?>'>
-						<video src='media.php?file=<?php echo urlencode($photo['path']); ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>'>
+					<a class='video-item' href='<?php echo $mediaPath; ?>'>
+						<video src='<?php echo $mediaPath; ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>'>
 							<?php foreach($photo['tracks'] as $track) { ?>
-								<track default kind='<?php echo htmlspecialchars($track['kind'],ENT_QUOTES); ?>' label='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' srclang='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' src='media.php?file=<?php echo urlencode($track['path']); ?>' />
+								<track default kind='<?php echo htmlspecialchars($track['kind'],ENT_QUOTES); ?>' label='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' srclang='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' src='<?php echo $mediaPath; ?>' />
 							<?php } ?>
 						</video>
 						<div>
@@ -111,8 +124,8 @@ function startsWith( $haystack, $needle ) {
 						</div>
 					</a>
 				<?php } else { ?>
-					<a class='file-item' href='media.php?file=<?php echo urlencode($photo['path']); ?>'>
-						<img src='img/file.svg'>
+					<a class='file-item' href='<?php echo $mediaPath; ?>'>
+						<img src='<?php echo str_repeat('../', $pathDepth); ?>img/file.svg'>
 						<div>
 							<div><?php echo htmlspecialchars($photo['title']); ?></div>
 							<div><?php echo htmlspecialchars($photo['subtitle']); ?></div>

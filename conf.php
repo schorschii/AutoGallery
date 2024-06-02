@@ -12,6 +12,12 @@ const PASSWORD = '';
 
 /*
 	Define the photo/video files root dir path here.
+	This can be a path relative to index.php or an absolute path (starting with "/"),
+	even outside the webroot dir. If you leave the media folder inside theautogallery
+	folder, please make sure that you have "AllowOverride All" set in your Apache config
+	in order to make the ".htaccess" file with "Deny from all" work. The media files
+	should be accessible only through the media.php script, otherwise the password
+	protection is useless.
 */
 const ROOT_DIR = 'media';
 

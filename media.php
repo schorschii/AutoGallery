@@ -7,9 +7,10 @@ const CACHE_TIME = 60*60*24;
 
 $file = null;
 
-if(!empty($_GET['file']) && is_file(ROOT_DIR.'/'.$_GET['file'])
-&& startsWith(realpath(ROOT_DIR.'/'.$_GET['file']), realpath(ROOT_DIR))) {
-	$file = ROOT_DIR.'/'.$_GET['file'];
+$requestPath = urldecode(trim($_SERVER['PATH_INFO'] ?? null, '/'));
+if(!empty($requestPath) && is_file(ROOT_DIR.'/'.$requestPath)
+&& startsWith(realpath(ROOT_DIR.'/'.$requestPath), realpath(ROOT_DIR))) {
+	$file = ROOT_DIR.'/'.$requestPath;
 }
 if($file) {
 	header('Cache-Control: private, max-age=' . CACHE_TIME . ', immutable');
@@ -21,8 +22,4 @@ if($file) {
 } else {
 	header('HTTP/1.1 404 NOT FOUND');
 	die('nope.');
-}
-function startsWith( $haystack, $needle ) {
-	$length = strlen( $needle );
-	return substr( $haystack, 0, $length ) === $needle;
 }
