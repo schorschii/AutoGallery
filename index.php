@@ -16,9 +16,13 @@ if(!empty($requestPath)) {
 		$folderTitle = basename($requestPath);
 		$searchPath = ROOT_DIR.'/'.$requestPath;
 		$pathDepth = count(explode('/', $requestPath));
+		if(!startsWith($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME'])) {
+			$pathDepth -= 1;
+		}
 	} else {
 		header('HTTP/1.1 404 NOT FOUND');
 		header('Location: '.$_SERVER['SCRIPT_NAME']);
+		die();
 	}
 }
 
