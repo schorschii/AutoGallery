@@ -14,6 +14,7 @@ if(!empty($requestPath)) {
 	if(is_dir(ROOT_DIR.'/'.$requestPath)
 	&& startsWith(realpath(ROOT_DIR.'/'.$requestPath), realpath(ROOT_DIR))) {
 		$folderTitle = basename(realpath(ROOT_DIR.'/'.$requestPath));
+		if(substr($folderTitle, 0, 1) == '.') $folderTitle = substr($folderTitle, 1);
 		$searchPath = ROOT_DIR.'/'.$requestPath;
 		$pathDepth = count(explode('/', $requestPath));
 		if(!startsWith($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME'])) {
