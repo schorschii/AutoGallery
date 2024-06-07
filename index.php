@@ -29,6 +29,10 @@ if(!empty($requestPath)) {
 	}
 }
 
+// statistic
+require_once(__DIR__.'/stat.php');
+writeStat($requestPath.'/');
+
 // scan dir contents
 $files = scandir($searchPath);
 $ignoreDirs = [];

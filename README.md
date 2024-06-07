@@ -17,7 +17,8 @@ AutoGallery is a simple PHP web app for presenting images, videos and other file
 ## Installation
 1. Copy all files onto your web server.
 2. Copy your files (images, videos and other files; sub-directories possible) into the `media` dir.
-3. Optional: change values in `conf.php`
+3. Create `conf.php` from `conf.php.example`.  
+   Optional: change values:
    - change gallery title in `const TITLE`
    - set a password in `const PASSWORD`
    - set which IPTC fields should be shown in `const PHOTO_TITLE` and `const PHOTO_SUBTITLE`
@@ -48,3 +49,6 @@ Bonus: if available, you can extract embedded chapters from video files with `ff
 ```
 python3 chapters.py video.mov > chapters.en.vtt
 ```
+
+### Statistics
+If you want to capture user statistics, you need to create a MySQL/MariaDB database and import the database schema from `sql/SCHEMA.sql`. Then, enter your database credentials in the `STAT_DB_*` constants in `conf.php`. And all requests will be logged into that database.

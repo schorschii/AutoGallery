@@ -13,7 +13,7 @@ const PASSWORD = '';
 /*
 	Define the photo/video files root dir path here.
 	This can be a path relative to index.php or an absolute path (starting with "/"),
-	even outside the webroot dir. If you leave the media folder inside theautogallery
+	even outside the webroot dir. If you leave the media folder inside the autogallery
 	folder, please make sure that you have "AllowOverride All" set in your Apache config
 	in order to make the ".htaccess" file with "Deny from all" work. The media files
 	should be accessible only through the media.php script, otherwise the password
@@ -47,3 +47,13 @@ const ROOT_DIR = 'media';
 */
 const PHOTO_TITLE = '';
 const PHOTO_SUBTITLE = '2#120';
+
+/*
+	If you want to capture web stats, import the database schema from
+	`sql/SCHEMA.sql` into a MySQL/MariaDB database and enter the credentials here.
+*/
+const DB_TYPE = 'mysql';
+const DB_HOST = 'localhost';
+const DB_NAME = '';
+const DB_USER = '';
+const DB_PASS = '';
