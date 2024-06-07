@@ -43,8 +43,8 @@ foreach($files as $file) {
 	$photo = [
 		'type' => mime_content_type($searchPath.'/'.$file),
 		'path' => substr($searchPath.'/'.$file, strlen(ROOT_DIR)+1),
-		'title' => basename($file),
-		'subtitle' => '',
+		'title' => PHOTO_TITLE=='FILENAME.EXT' ? basename($file) : (PHOTO_TITLE=='FILENAME' ? pathinfo($file,PATHINFO_FILENAME) : ''),
+		'subtitle' => PHOTO_SUBTITLE=='FILENAME.EXT' ? basename($file) : (PHOTO_SUBTITLE=='FILENAME' ? pathinfo($file,PATHINFO_FILENAME) : ''),
 		'tracks' => [],
 	];
 	if(startsWith($photo['type'], 'image/')) {
@@ -119,10 +119,12 @@ function urlencodePath($path) {
 				<?php if(startsWith($photo['type'], 'image/')) { ?>
 					<a class='photo-item' href='<?php echo $mediaPath; ?>'>
 						<img loading='lazy' src='<?php echo $mediaPath; ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>'>
+						<?php if(!empty($photo['title']) || !empty($photo['subtitle'])) { ?>
 						<div>
 							<div><?php echo htmlspecialchars($photo['title']); ?></div>
 							<div><?php echo htmlspecialchars($photo['subtitle']); ?></div>
 						</div>
+						<?php } ?>
 					</a>
 				<?php } elseif(startsWith($photo['type'], 'video/')) { ?>
 					<a class='video-item' href='<?php echo $mediaPath; ?>'>
@@ -131,18 +133,22 @@ function urlencodePath($path) {
 								<track default kind='<?php echo htmlspecialchars($track['kind'],ENT_QUOTES); ?>' label='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' srclang='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' src='<?php echo str_repeat('../', $pathDepth).'media.php/'.$track['path']; ?>' />
 							<?php } ?>
 						</video>
+						<?php if(!empty($photo['title']) || !empty($photo['subtitle'])) { ?>
 						<div>
 							<div><?php echo htmlspecialchars($photo['title']); ?></div>
 							<div><?php echo htmlspecialchars($photo['subtitle']); ?></div>
 						</div>
+						<?php } ?>
 					</a>
 				<?php } else { ?>
 					<a class='file-item' href='<?php echo $mediaPath; ?>'>
 						<img src='<?php echo str_repeat('../', $pathDepth); ?>img/file.svg'>
+						<?php if(!empty($photo['title']) || !empty($photo['subtitle'])) { ?>
 						<div>
 							<div><?php echo htmlspecialchars($photo['title']); ?></div>
 							<div><?php echo htmlspecialchars($photo['subtitle']); ?></div>
 						</div>
+						<?php } ?>
 					</a>
 				<?php } ?>
 			<?php } ?>

@@ -23,8 +23,8 @@ const ROOT_DIR = 'media';
 
 /*
 	Define what should be displayed as image title and subtile.
+	You can use FILENAME.EXT or FILENAME to display the respective file name with or without extension.
 	Enter the ID of an IPTC tag to display the IPTC field value, e.g. '2#120' for the Caption.
-	Leave PHOTO_TITLE empty to display the file name.
 	Possible IPTC fields:
 		2#005 -> DocumentTitle
 		2#010 -> Urgency
@@ -44,8 +44,9 @@ const ROOT_DIR = 'media';
 		2#116 -> Copyright
 		2#120 -> Caption
 		2#122 -> CaptionWriter
+	You can also leave the field empty to not display anything.
 */
-const PHOTO_TITLE = '';
+const PHOTO_TITLE = 'FILENAME.EXT';
 const PHOTO_SUBTITLE = '2#120';
 
 /*
