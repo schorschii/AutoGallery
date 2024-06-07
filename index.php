@@ -34,6 +34,7 @@ $files = scandir($searchPath);
 $ignoreDirs = [];
 foreach($files as $file) {
 	if(substr($file, 0, 1) == '.') continue;
+	if(is_link($searchPath.'/'.$file)) continue;
 	if(!is_file($searchPath.'/'.$file)) continue;
 	$photo = [
 		'type' => mime_content_type($searchPath.'/'.$file),
@@ -70,6 +71,7 @@ foreach($files as $file) {
 }
 foreach($files as $file) {
 	if(substr($file, 0, 1) == '.') continue;
+	if(is_link($searchPath.'/'.$file)) continue;
 	if(!is_dir($searchPath.'/'.$file)) continue;
 	if(in_array($searchPath.'/'.$file, $ignoreDirs)) continue;
 	$dirs[] = [
