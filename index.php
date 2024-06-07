@@ -13,10 +13,12 @@ $requestPath = urldecode(trim($_SERVER['PATH_INFO'] ?? null, '/'));
 if(!empty($requestPath)) {
 	if(is_dir(ROOT_DIR.'/'.$requestPath)
 	&& startsWith(realpath(ROOT_DIR.'/'.$requestPath), realpath(ROOT_DIR))) {
-		$folderTitle = basename($requestPath);
+		$folderTitle = basename(realpath(ROOT_DIR.'/'.$requestPath));
 		$searchPath = ROOT_DIR.'/'.$requestPath;
 		$pathDepth = count(explode('/', $requestPath));
 		if(!startsWith($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME'])) {
+			// support for URLs: http://host/index.php/foldername AND http://host/foldername
+			// the latter is only supported if .htaccess overrides are allowed in Apache config
 			$pathDepth -= 1;
 		}
 	} else {
@@ -84,7 +86,7 @@ function urlencodePath($path) {
 <html>
 	<head>
 		<meta charset='utf-8'>
-		<title><?php echo htmlspecialchars(TITLE); ?></title>
+		<title><?php echo htmlspecialchars($folderTitle); ?></title>
 		<link rel='stylesheet' type='text/css' href='<?php echo str_repeat('../', $pathDepth); ?>css/main.css' />
 		<script src='<?php echo str_repeat('../', $pathDepth); ?>js/3dfx.js'></script>
 		<script src='<?php echo str_repeat('../', $pathDepth); ?>js/lightbox.js'></script>

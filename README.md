@@ -22,7 +22,11 @@ AutoGallery is a simple PHP web app for presenting images, videos and other file
    - set a password in `const PASSWORD`
    - set which IPTC fields should be shown in `const PHOTO_TITLE` and `const PHOTO_SUBTITLE`
 
-## Videos with Chapters and Subtitles
+## Usage
+### Symlinks
+The application supports symlinks which allows you to create easy-to-read URLs. Example: you have a folder called "Holidays June 2014". You can create a symlink via `ln -s "Holidays June 2014" "holidays2014"` so you can share the simpler URL `https://gallery.example.com/holidays2014` with your friends. The web app still shows the nice name "Holidays June 2014" as headline even when accessed via shortlink.
+
+### Videos with Chapters and Subtitles
 Video subtitles and chapters are read from .vtt files. If you want to add such to a video, you need to create a folder with the same name as the video file (without file extension). Inside this folder, place your .vtt files with the following file name schema.
 - Subtitles: `subtitles.<LANGCODE>.vtt`, e.g. `subtitles.de.vtt`
 - Chapters: `chapters.<LANGCODE>.vtt`
