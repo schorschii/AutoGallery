@@ -6,6 +6,7 @@
 }
 
 :root {
+	--lightboxpadtop: 55px;
 	--lightboxpad: 3%;
 }
 
@@ -125,8 +126,10 @@ h1, h2, h3 {
 	height: 100%;
 	background-color: rgba(255,255,255,0.8);
 	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
 }
 #lightbox.fullscreen {
+	--lightboxpadtop: 0%;
 	--lightboxpad: 0%;
 }
 #lightbox.fullscreen #lightboxBack {
@@ -139,10 +142,10 @@ h1, h2, h3 {
 	object-fit: contain;
 	position: absolute;
 	filter: drop-shadow(0px 0px 25px rgba(0,0,0,0.35));
-	top: calc(var(--lightboxpad) * 2);
+	top: var(--lightboxpadtop);
 	left: var(--lightboxpad);
 	width: calc(100% - (var(--lightboxpad) * 2));
-	height: calc(100% - (var(--lightboxpad) * 3));
+	height: calc(100% - var(--lightboxpad) - var(--lightboxpadtop));
 }
 #lightboxVideo {
 	background-color: black;
@@ -211,9 +214,8 @@ h1, h2, h3 {
 #lightbox.fullscreen #lightboxControls {
 	opacity: 0;
 }
-#lightboxControls.visible,
-#lightboxControls:hover {
-	opacity: 1 !important;
+#lightbox #lightboxControls.visible {
+	opacity: 1;
 }
 #lightboxControls > a {
 	padding: 8px;

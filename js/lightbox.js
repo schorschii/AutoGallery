@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	for(i = 0; i < elements.length; i ++) {
 		elements[i].addEventListener('click', function(e) {
 			e.preventDefault();
+			this.style.transform = '';
 
 			// get all images in gallery
 			var elements = gallery.querySelectorAll('.photo-item img, .video-item video');
@@ -81,7 +82,7 @@ function lightboxShow(element) {
 	maximizeElement.animate(
 		[
 			{ top:viewportOffset.top+'px', left:viewportOffset.left+'px', width:viewportOffset.width+'px', height:viewportOffset.height+'px' },
-			{ top:'calc(var(--lightboxpad) * 2)', left:'var(--lightboxpad)', width:'calc(100% - (var(--lightboxpad) * 2))', height:'calc(100% - (var(--lightboxpad) * 3))' },
+			{ top:'var(--lightboxpadtop)', left:'var(--lightboxpad)', width:'calc(100% - (var(--lightboxpad) * 2))', height:'calc(100% - var(--lightboxpad) - var(--lightboxpadtop))' },
 		],
 		{ duration: LIGHTBOX_ANIM_DURATION, easing: 'ease-in-out' }
 	);
@@ -168,12 +169,13 @@ function lightboxNext(step) {
 	// setup video or img element
 	if(lightboxSlides[lightboxSlideIndex].tagName == 'VIDEO') {
 		// remove prev text tracks
-		// creating a new video element is necessary for Firefox
+		// creating a new video element is necessary for working chapters in Firefox
 		let element = document.getElementById('lightboxVideo');
 		if(element) element.remove();
 		element = document.createElement('VIDEO');
 		element.id = 'lightboxVideo';
 		element.controls = true;
+		element.setAttribute('playsinline', true);
 		element.addEventListener('loadeddata', function(){
 			for(var i=0; i<lightboxVideo.textTracks.length; i++) {
 				if(lightboxVideo.textTracks[i].kind != 'chapters') continue;
