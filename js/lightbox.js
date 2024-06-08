@@ -209,6 +209,19 @@ function lightboxNext(step) {
 		lightboxVideo.classList.remove('hidden');
 		lightboxImg.classList.add('hidden');
 		lightboxVideo.src = lightboxSlides[lightboxSlideIndex].src;
+
+		element.addEventListener('ended', function(){
+			if(btnLightboxSlideshowPlay.classList.contains('hidden')) {
+				// continue slideshow when ended
+				lightboxSlideshowPlay();
+				lightboxNext(1);
+			}
+		});
+		if(btnLightboxSlideshowPlay.classList.contains('hidden')) {
+			// pause slideshow until video ended
+			lightboxSlideshowPause(false);
+			lightboxVideo.play();
+		}
 	} else {
 		lightboxVideo.classList.add('hidden');
 		lightboxImg.classList.remove('hidden');
@@ -256,16 +269,21 @@ function lightboxFullscreenExit() {
 
 var lightboxSlideshowInterval = null;
 function lightboxSlideshowPlay() {
-	lightboxSlideshowInterval = setInterval(function(e){
-		lightboxNext(1);
-	}, 3000);
+	if(lightboxVideo.paused) {
+		lightboxSlideshowInterval = setInterval(function(e){
+			lightboxNext(1);
+		}, 3000);
+	}
 	lightbox.classList.add('slideshow');
 	btnLightboxSlideshowPlay.classList.add('hidden');
 	btnLightboxSlideshowPause.classList.remove('hidden');
 }
-function lightboxSlideshowPause() {
+function lightboxSlideshowPause(switchButton=true) {
 	clearInterval(lightboxSlideshowInterval);
-	lightbox.classList.remove('slideshow');
-	btnLightboxSlideshowPlay.classList.remove('hidden');
-	btnLightboxSlideshowPause.classList.add('hidden');
+	lightboxSlideshowInterval = null;
+	if(switchButton) {
+		lightbox.classList.remove('slideshow');
+		btnLightboxSlideshowPlay.classList.remove('hidden');
+		btnLightboxSlideshowPause.classList.add('hidden');
+	}
 }
