@@ -11,7 +11,7 @@ if(empty(PASSWORD) || !empty($_SESSION['username'])) {
 $info = null;
 if(!empty($_POST['password'])) {
 	if((is_string(PASSWORD) && $_POST['password'] === PASSWORD)
-	|| (is_array(PASSWORD) && in_array($_POST['password'], PASSWORD))) {
+	|| (is_array(PASSWORD) && in_array($_POST['password'], PASSWORD, true))) {
 		$_SESSION['username'] = 'anonymous';
 		header('Location: index.php');
 		die('Login OK');
