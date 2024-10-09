@@ -20,7 +20,7 @@ AutoGallery is a simple PHP web app for presenting images, videos and other file
 3. Create `conf.php` from `conf.php.example`.  
    Optional: change values:
    - change gallery title in `const TITLE`
-   - set a password in `const PASSWORD`
+   - set a password in `const PASSWORD` (can also be an array with multiple passwords)
    - set which IPTC fields should be shown in `const PHOTO_TITLE` and `const PHOTO_SUBTITLE`
 
 ## Usage

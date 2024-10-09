@@ -7,6 +7,9 @@ const TITLE = 'Gallery';
 
 /*
 	Define the view password here.
+	This can alo be an array if you want to have multiple passwords.
+	( const PASSWORD = ['password1', 'password2']; )
+	If the password (array) is empty, the media can be accessed without authentication!
 */
 const PASSWORD = '';
 
