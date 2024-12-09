@@ -36,10 +36,15 @@ writeStat($requestPath.'/');
 // scan dir contents
 $files = scandir($searchPath);
 $ignoreDirs = [];
+$descriptionHtml = '';
 foreach($files as $file) {
 	if(substr($file, 0, 1) == '.') continue;
 	if(is_link($searchPath.'/'.$file)) continue;
 	if(!is_file($searchPath.'/'.$file)) continue;
+	if($file == 'index.html') {
+		$descriptionHtml = file_get_contents($searchPath.'/'.$file);
+		continue;
+	}
 	$photo = [
 		'type' => mime_content_type($searchPath.'/'.$file),
 		'path' => substr($searchPath.'/'.$file, strlen(ROOT_DIR)+1),
@@ -102,6 +107,7 @@ function urlencodePath($path) {
 	<body>
 		<h1><?php echo htmlspecialchars($folderTitle); ?></h1>
 
+		<?php echo $descriptionHtml; ?>
 		<div id='gallery' class='photos'>
 			<?php if(empty($dirs) && empty($photos)) { ?>
 				<div id='galleryempty'>This directory is empty.</div>
