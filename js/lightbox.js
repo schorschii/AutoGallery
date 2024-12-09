@@ -164,7 +164,7 @@ function lightboxNext(step) {
 
 	// setup download btn
 	btnLightboxDownload.href = lightboxSlides[lightboxSlideIndex].src;
-	btnLightboxDownload.download = lightboxSlides[lightboxSlideIndex].getAttribute('media_title');
+	btnLightboxDownload.download = lightboxSlides[lightboxSlideIndex].getAttribute('media_filename');
 
 	// setup video or img element
 	if(lightboxSlides[lightboxSlideIndex].tagName == 'VIDEO') {
