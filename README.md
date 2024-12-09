@@ -27,7 +27,7 @@ AutoGallery is a simple PHP web app for presenting images, videos and other file
 ### Symlinks
 The application supports symlinks which allows you to create easy-to-read URLs. Example: you have a folder called "Holidays June 2014". You can create a symlink via `ln -s "Holidays June 2014" "holidays2014"` so you can share the simpler URL `https://gallery.example.com/holidays2014` with your friends. The web app still shows the nice name "Holidays June 2014" as headline even when accessed via shortlink.
 
-## HTML Description
+### HTML Description
 You can display a descriptive text to each folder by creating a file `index.html` in your media folder with the desired HTML content.
 
 ### Hide Folders
