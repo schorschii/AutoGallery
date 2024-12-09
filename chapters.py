@@ -16,10 +16,12 @@ print()
 
 chapters = json.loads(jsonout)['chapters']
 for chapter in chapters:
-    seconds = int(chapter['start']) / 1000
-    m, s = divmod(seconds, 60)
+    decimalSplit = chapter['start_time'].split('.')
+    milliSeconds = decimalSplit[1][0:3]
+    totalSeconds = int(decimalSplit[0])
+    m, s = divmod(totalSeconds, 60)
     h, m = divmod(m, 60)
     #print(f'{int(h):01d}:{int(m):02d}:{int(s):02d}', chapter['tags']['title'])
-    print(f'{int(h):01d}:{int(m):02d}:{int(s):02d}.000 --> {int(h):01d}:{int(m):02d}:{int(s+1):02d}.000')
+    print(f'{int(h):01d}:{int(m):02d}:{int(s):02d}.{milliSeconds} --> {int(h):01d}:{int(m):02d}:{int(s+1):02d}.{milliSeconds}')
     print(chapter['tags']['title'])
     print()
