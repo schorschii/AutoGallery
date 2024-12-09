@@ -11,6 +11,9 @@ jsonout = subprocess.check_output([
     'ffprobe', '-show_chapters', '-print_format', 'json', sys.argv[1]
 ])
 
+print('WEBVTT')
+print()
+
 chapters = json.loads(jsonout)['chapters']
 for chapter in chapters:
     seconds = int(chapter['start']) / 1000
