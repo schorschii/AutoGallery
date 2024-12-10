@@ -43,6 +43,11 @@ document.addEventListener('mousemove', function() {
 	clearTimeout(mouseMoveTimeout);
 	mouseMoveTimeout = setTimeout(function(e){ lightboxControls.classList.remove('visible'); }, 2000);
 });
+document.addEventListener('touchend', function() {
+	lightboxControls.classList.add('visible');
+	clearTimeout(mouseMoveTimeout);
+	mouseMoveTimeout = setTimeout(function(e){ lightboxControls.classList.remove('visible'); }, 2000);
+});
 
 function formatSeconds(totalSeconds) {
 	hours = Math.floor(totalSeconds / 3600);
