@@ -52,6 +52,7 @@ foreach($files as $file) {
 		'title' => PHOTO_TITLE=='FILENAME.EXT' ? basename($file) : (PHOTO_TITLE=='FILENAME' ? pathinfo($file,PATHINFO_FILENAME) : ''),
 		'subtitle' => PHOTO_SUBTITLE=='FILENAME.EXT' ? basename($file) : (PHOTO_SUBTITLE=='FILENAME' ? pathinfo($file,PATHINFO_FILENAME) : ''),
 		'tracks' => [],
+		'thumbnail' => null,
 	];
 	if(startsWith($photo['type'], 'image/')) {
 		$size = getimagesize($searchPath.'/'.$file, $info);
@@ -74,6 +75,10 @@ foreach($files as $file) {
 				'kind' => $splitter[0],
 				'srclang' => $splitter[1],
 			];
+			$ignoreDirs[] = $searchPath.'/'.pathinfo($file, PATHINFO_FILENAME);
+		}
+		foreach(glob($searchPath.'/'.pathinfo($file, PATHINFO_FILENAME).'/thumbnail.*') as $thumb) {
+			$photo['thumbnail'] = substr($thumb, strlen(ROOT_DIR)+1);
 			$ignoreDirs[] = $searchPath.'/'.pathinfo($file, PATHINFO_FILENAME);
 		}
 	}
@@ -122,10 +127,13 @@ function urlencodePath($path) {
 				</a>
 			<?php } ?>
 			<?php foreach($photos as $photo) { ?>
-				<?php $mediaPath = str_repeat('../', $pathDepth).'media.php/'.urlencodePath($photo['path']); ?>
+				<?php
+				$pathPrefix = str_repeat('../', $pathDepth).'media.php/';
+				$mediaPath = $pathPrefix.urlencodePath($photo['path']);
+				?>
 				<?php if(startsWith($photo['type'], 'image/')) { ?>
-					<a class='photo-item' href='<?php echo $mediaPath; ?>'>
-						<img loading='lazy' src='<?php echo $mediaPath; ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>' media_filename='<?php echo htmlspecialchars($photo['filename'],ENT_QUOTES); ?>'>
+					<a class='photo-item' href='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'>
+						<img loading='lazy' src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>' media_filename='<?php echo htmlspecialchars($photo['filename'],ENT_QUOTES); ?>'>
 						<?php if(!empty($photo['title']) || !empty($photo['subtitle'])) { ?>
 						<div>
 							<div><?php echo htmlspecialchars($photo['title']); ?></div>
@@ -134,10 +142,10 @@ function urlencodePath($path) {
 						<?php } ?>
 					</a>
 				<?php } elseif(startsWith($photo['type'], 'video/')) { ?>
-					<a class='video-item' href='<?php echo $mediaPath; ?>'>
-						<video src='<?php echo $mediaPath; ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>' media_filename='<?php echo htmlspecialchars($photo['filename'],ENT_QUOTES); ?>'>
+					<a class='video-item' href='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'>
+						<video src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>' poster='<?php if($photo['thumbnail']) echo htmlspecialchars($pathPrefix.$photo['thumbnail'],ENT_QUOTES); ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>' media_filename='<?php echo htmlspecialchars($photo['filename'],ENT_QUOTES); ?>'>
 							<?php foreach($photo['tracks'] as $track) { ?>
-								<track default kind='<?php echo htmlspecialchars($track['kind'],ENT_QUOTES); ?>' label='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' srclang='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' src='<?php echo str_repeat('../', $pathDepth).'media.php/'.$track['path']; ?>' />
+								<track default kind='<?php echo htmlspecialchars($track['kind'],ENT_QUOTES); ?>' label='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' srclang='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' src='<?php echo htmlspecialchars($pathPrefix.$track['path'],ENT_QUOTES); ?>' />
 							<?php } ?>
 						</video>
 						<?php if(!empty($photo['title']) || !empty($photo['subtitle'])) { ?>

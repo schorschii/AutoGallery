@@ -33,10 +33,12 @@ You can display a descriptive text to each folder by creating a file `index.html
 ### Hide Folders
 You can hide folders the common Unix way by adding a "." at the beginning of the folder name. The folder is still accessible!
 
-### Videos with Chapters and Subtitles
+### Videos with Chapters, Subtitles and Thumbnail
 Video subtitles and chapters are read from .vtt files. If you want to add such to a video, you need to create a folder with the same name as the video file (without file extension). Inside this folder, place your .vtt files with the following file name schema.
 - Subtitles: `subtitles.<LANGCODE>.vtt`, e.g. `subtitles.de.vtt`
 - Chapters: `chapters.<LANGCODE>.vtt`
+
+If you want to show a custom thumbnail, place a file called `thumbnail.jpg` in this folder.
 
 A file tree could look like this:
 ```
@@ -46,6 +48,7 @@ media/
 -- subtitles.en.vtt
 -- subtitles.de.vtt
 -- chapters.en.vtt
+-- thumbnail.jpg
 ```
 
 Bonus: if available, you can extract embedded chapters from video files with `ffprobe` from ffmpeg using the `chapters.py` script:
