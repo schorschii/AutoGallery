@@ -14,14 +14,18 @@ jsonout = subprocess.check_output([
 print('WEBVTT')
 print()
 
-chapters = json.loads(jsonout)['chapters']
-for chapter in chapters:
-    decimalSplit = chapter['start_time'].split('.')
-    milliSeconds = decimalSplit[1][0:3]
-    totalSeconds = int(decimalSplit[0])
+def format_seconds(seconds:str):
+    decimal_split = seconds.split('.')
+    milliSeconds = decimal_split[1][0:3]
+    totalSeconds = int(decimal_split[0])
     m, s = divmod(totalSeconds, 60)
     h, m = divmod(m, 60)
-    #print(f'{int(h):01d}:{int(m):02d}:{int(s):02d}', chapter['tags']['title'])
-    print(f'{int(h):01d}:{int(m):02d}:{int(s):02d}.{milliSeconds} --> {int(h):01d}:{int(m):02d}:{int(s+1):02d}.{milliSeconds}')
+    return f'{int(h):01d}:{int(m):02d}:{int(s):02d}.{milliSeconds}'
+
+chapters = json.loads(jsonout)['chapters']
+for chapter in chapters:
+    start = format_seconds(chapter['start_time'])
+    end = format_seconds(chapter['end_time'])
+    print(f'{start} --> {end}')
     print(chapter['tags']['title'])
     print()
