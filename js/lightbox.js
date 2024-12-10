@@ -38,16 +38,13 @@ document.addEventListener('keydown', function(event) {
 	}
 });
 var mouseMoveTimeout = null;
-document.addEventListener('mousemove', function() {
+var showLightboxControls = function() {
 	lightboxControls.classList.add('visible');
 	clearTimeout(mouseMoveTimeout);
 	mouseMoveTimeout = setTimeout(function(e){ lightboxControls.classList.remove('visible'); }, 2000);
-});
-document.addEventListener('touchend', function() {
-	lightboxControls.classList.add('visible');
-	clearTimeout(mouseMoveTimeout);
-	mouseMoveTimeout = setTimeout(function(e){ lightboxControls.classList.remove('visible'); }, 2000);
-});
+}
+document.addEventListener('mousemove', showLightboxControls);
+document.addEventListener('touchend', showLightboxControls);
 
 function formatSeconds(totalSeconds) {
 	hours = Math.floor(totalSeconds / 3600);
