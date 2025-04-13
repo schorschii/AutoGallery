@@ -34,7 +34,7 @@ You can display a descriptive text to each folder by creating a file `index.html
 You can hide folders the common Unix way by adding a "." at the beginning of the folder name. The folder is still accessible!
 
 ### Videos with Chapters, Subtitles and Thumbnail
-Video subtitles and chapters are read from .vtt files. If you want to add such to a video, you need to create a folder with the same name as the video file (without file extension). Inside this folder, place your .vtt files with the following file name schema.
+Video subtitles and chapters are read by Browsers from .vtt files. If you want to add such to a video, you need to create a folder with the same name as the video file (without file extension). Inside this folder, place your .vtt files with the following file name schema.
 - Subtitles: `subtitles.<LANGCODE>.vtt`, e.g. `subtitles.de.vtt`
 - Chapters: `chapters.<LANGCODE>.vtt`
 
@@ -51,10 +51,7 @@ media/
 -- thumbnail.jpg
 ```
 
-Bonus: if available, you can extract embedded chapters from video files with `ffprobe` from ffmpeg using the `chapters.py` script:
-```
-python3 chapters.py video.mov > chapters.en.vtt
-```
+If available, embedded chapters from video files can be extracted automatically using `ffprobe`. Make sure ffmpeg is installed and then set `VIDEO_EXTRACT_METADATA = true` in the config file.
 
 ### Statistics
 If you want to capture user statistics, you need to create a MySQL/MariaDB database and import the database schema from `sql/SCHEMA.sql`. Then, enter your database credentials in the `STAT_DB_*` constants in `conf.php`. And all requests will be logged into that database.

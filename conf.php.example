@@ -53,6 +53,12 @@ const PHOTO_TITLE = 'FILENAME.EXT';
 const PHOTO_SUBTITLE = '2#120';
 
 /*
+	Enable or disable video automatic metadata extraction (subtitles).
+	Works only if ffmpeg/ffprobe is installed.
+*/
+const VIDEO_EXTRACT_METADATA = false;
+
+/*
 	If you want to capture web stats, import the database schema from
 	`sql/SCHEMA.sql` into a MySQL/MariaDB database and enter the credentials here.
 */

@@ -67,7 +67,15 @@ foreach($files as $file) {
 		}
 	}
 	if(startsWith($photo['type'], 'video/')) {
-		foreach(glob($searchPath.'/'.pathinfo($file, PATHINFO_FILENAME).'/*.vtt') as $vttfile) {
+		$metadataDir = $searchPath.'/'.pathinfo($file, PATHINFO_FILENAME);
+		if(VIDEO_EXTRACT_METADATA && !file_exists($metadataDir)) {
+			require_once('lib/video.php');
+			mkdir($metadataDir);
+			foreach(extractSubtitlesVtt($searchPath.'/'.$file) as $vttName => $vttContent) {
+				file_put_contents($metadataDir.'/'.$vttName.'.en.vtt', $vttContent);
+			}
+		}
+		foreach(glob($metadataDir.'/*.vtt') as $vttfile) {
 			$splitter = explode('.', basename($vttfile));
 			if(count($splitter) != 3) continue;
 			$photo['tracks'][] = [
@@ -75,11 +83,11 @@ foreach($files as $file) {
 				'kind' => $splitter[0],
 				'srclang' => $splitter[1],
 			];
-			$ignoreDirs[] = $searchPath.'/'.pathinfo($file, PATHINFO_FILENAME);
+			$ignoreDirs[] = $metadataDir;
 		}
-		foreach(glob($searchPath.'/'.pathinfo($file, PATHINFO_FILENAME).'/thumbnail.*') as $thumb) {
+		foreach(glob($metadataDir.'/thumbnail.*') as $thumb) {
 			$photo['thumbnail'] = substr($thumb, strlen(ROOT_DIR)+1);
-			$ignoreDirs[] = $searchPath.'/'.pathinfo($file, PATHINFO_FILENAME);
+			$ignoreDirs[] = $metadataDir;
 		}
 	}
 	$photos[] = $photo;
