@@ -68,13 +68,19 @@ foreach($files as $file) {
 	}
 	if(startsWith($photo['type'], 'video/')) {
 		$metadataDir = $searchPath.'/'.pathinfo($file, PATHINFO_FILENAME);
+		$ignoreDirs[] = $metadataDir;
+		// start chapter extraction if enabled and not already done
 		if(VIDEO_EXTRACT_METADATA && !file_exists($metadataDir)) {
 			require_once('lib/video.php');
-			mkdir($metadataDir);
-			foreach(extractSubtitlesVtt($searchPath.'/'.$file) as $vttName => $vttContent) {
-				file_put_contents($metadataDir.'/'.$vttName.'.en.vtt', $vttContent);
+			@mkdir($metadataDir);
+			// proceed only if dir could be created (skip e.g. in case of permission errors)
+			if(file_exists($metadataDir)) {
+				foreach(extractSubtitlesVtt($searchPath.'/'.$file) as $vttName => $vttContent) {
+					file_put_contents($metadataDir.'/'.$vttName.'.en.vtt', $vttContent);
+				}
 			}
 		}
+		// search for existing video metatdate/chapters
 		foreach(glob($metadataDir.'/*.vtt') as $vttfile) {
 			$splitter = explode('.', basename($vttfile));
 			if(count($splitter) != 3) continue;
@@ -83,11 +89,9 @@ foreach($files as $file) {
 				'kind' => $splitter[0],
 				'srclang' => $splitter[1],
 			];
-			$ignoreDirs[] = $metadataDir;
 		}
 		foreach(glob($metadataDir.'/thumbnail.*') as $thumb) {
 			$photo['thumbnail'] = substr($thumb, strlen(ROOT_DIR)+1);
-			$ignoreDirs[] = $metadataDir;
 		}
 	}
 	$photos[] = $photo;
