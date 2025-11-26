@@ -260,6 +260,12 @@ input, textarea, select, button {
 	font-size: inherit;
 }
 
+#btnDownloadAll {
+	display: inline-flex;
+	vertical-align: middle;
+	justify-content: center;
+}
+
 @media (prefers-color-scheme: dark) {
 	body {
 		background-color: black;
@@ -277,7 +283,8 @@ input, textarea, select, button {
 	#lightboxBack {
 		background-color: rgba(0,0,0,0.8);
 	}
-	#lightboxControls svg {
+	#lightboxControls svg,
+	#btnDownloadAll svg {
 		fill: white;
 	}
 	#lightboxControls > a {

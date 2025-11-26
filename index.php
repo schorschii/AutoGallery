@@ -107,6 +107,28 @@ foreach($files as $file) {
 	];
 }
 
+if(isset($_GET['zip'])) {
+	session_write_close();
+	$zip = new ZipArchive();
+	$file = '/tmp/'.uniqid().'.zip';
+	if($zip->open($file, ZipArchive::CREATE) !== true)
+		throw new Exception('Unable to open temp zip file');
+
+	foreach($photos as $photo) {
+		$zip->addFile(ROOT_DIR.'/'.$photo['path'], $photo['filename']);
+		$zip->setCompressionName(ROOT_DIR.'/'.$photo['path'], ZipArchive::CM_STORE);
+	}
+	$zip->close();
+
+	header('Content-Type: application/octet-stream');
+	header('Content-Transfer-Encoding: Binary');
+	header('Content-Length: '.filesize($file));
+	header('Content-Disposition: attachment; filename="'.$folderTitle.'.zip"');
+	readfile($file);
+	unlink($file);
+	die();
+}
+
 function urlencodePath($path) {
 	$parts = explode('/', $path);
 	return implode('/', array_map('urlencode', $parts));
@@ -117,13 +139,34 @@ function urlencodePath($path) {
 	<head>
 		<meta charset='utf-8'>
 		<title><?php echo htmlspecialchars($folderTitle); ?></title>
-		<link rel='stylesheet' type='text/css' href='<?php echo str_repeat('../', $pathDepth); ?>css/main.css' />
+		<link rel='stylesheet' type='text/css' href='<?php echo str_repeat('../', $pathDepth); ?>css/main.css?v=2' />
 		<script src='<?php echo str_repeat('../', $pathDepth); ?>js/3dfx.js'></script>
 		<script src='<?php echo str_repeat('../', $pathDepth); ?>js/lightbox.js'></script>
 		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+		<script>
+			function downloadAll() {
+				let items = gallery.querySelectorAll('a.photo-item>img, a.video-item>video, a.file-item>img');
+				for(i=0; i<items.length; i++) {
+					const a = document.createElement('a');
+					a.setAttribute('href', items[i].getAttribute('media_src'));
+					a.setAttribute('download', items[i].getAttribute('media_filename'));
+					a.style.display = 'none';
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+				}
+			}
+		</script>
 	</head>
 	<body>
-		<h1><?php echo htmlspecialchars($folderTitle); ?></h1>
+		<h1>
+			<?php echo htmlspecialchars($folderTitle); ?>
+			<?php if(!empty($photos)) { ?>
+				<a id='btnDownloadAll' href='#' title='Download all' onclick='downloadAll(); return false;'>
+					<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 -960 960 960" fill="#000000"><path d="M480-342 356-466l20-20 90 90v-352h28v352l90-90 20 20-124 124ZM272-212q-26 0-43-17t-17-43v-90h28v90q0 12 10 22t22 10h416q12 0 22-10t10-22v-90h28v90q0 26-17 43t-43 17H272Z"/></svg>
+				</a>
+			<?php } ?>
+		</h1>
 
 		<?php echo $descriptionHtml; ?>
 		<div id='gallery' class='photos'>
@@ -145,7 +188,13 @@ function urlencodePath($path) {
 				?>
 				<?php if(startsWith($photo['type'], 'image/')) { ?>
 					<a class='photo-item' href='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'>
-						<img loading='lazy' src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>' media_filename='<?php echo htmlspecialchars($photo['filename'],ENT_QUOTES); ?>'>
+						<img loading='lazy'
+						src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'
+						media_src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'
+						media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>'
+						media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>'
+						media_filename='<?php echo htmlspecialchars($photo['filename'],ENT_QUOTES); ?>'
+						>
 						<?php if(!empty($photo['title']) || !empty($photo['subtitle'])) { ?>
 						<div>
 							<div><?php echo htmlspecialchars($photo['title']); ?></div>
@@ -155,7 +204,14 @@ function urlencodePath($path) {
 					</a>
 				<?php } elseif(startsWith($photo['type'], 'video/')) { ?>
 					<a class='video-item' href='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'>
-						<video src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>' poster='<?php if($photo['thumbnail']) echo htmlspecialchars($pathPrefix.$photo['thumbnail'],ENT_QUOTES); ?>' media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>' media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>' media_filename='<?php echo htmlspecialchars($photo['filename'],ENT_QUOTES); ?>'>
+						<video
+						src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'
+						poster='<?php if($photo['thumbnail']) echo htmlspecialchars($pathPrefix.$photo['thumbnail'],ENT_QUOTES); ?>'
+						media_src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'
+						media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>'
+						media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>'
+						media_filename='<?php echo htmlspecialchars($photo['filename'],ENT_QUOTES); ?>'
+						>
 							<?php foreach($photo['tracks'] as $track) { ?>
 								<track default kind='<?php echo htmlspecialchars($track['kind'],ENT_QUOTES); ?>' label='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' srclang='<?php echo htmlspecialchars($track['srclang'],ENT_QUOTES); ?>' src='<?php echo htmlspecialchars($pathPrefix.$track['path'],ENT_QUOTES); ?>' />
 							<?php } ?>
@@ -169,7 +225,11 @@ function urlencodePath($path) {
 					</a>
 				<?php } else { ?>
 					<a class='file-item' href='<?php echo $mediaPath; ?>'>
-						<img src='<?php echo str_repeat('../', $pathDepth); ?>img/file.svg'>
+						<img
+						src='<?php echo str_repeat('../', $pathDepth); ?>img/file.svg'
+						media_src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'
+						media_filename='<?php echo htmlspecialchars($photo['filename'],ENT_QUOTES); ?>'
+						>
 						<?php if(!empty($photo['title']) || !empty($photo['subtitle'])) { ?>
 						<div>
 							<div><?php echo htmlspecialchars($photo['title']); ?></div>
