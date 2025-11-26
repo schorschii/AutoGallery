@@ -107,6 +107,7 @@ foreach($files as $file) {
 	];
 }
 
+// currently not used
 if(isset($_GET['zip'])) {
 	session_write_close();
 	$zip = new ZipArchive();
@@ -157,6 +158,14 @@ function urlencodePath($path) {
 				}
 			}
 		</script>
+		<?php if(defined('MATOMO_ENDPOINT') && MATOMO_ENDPOINT) { ?>
+			<img src='<?php echo MATOMO_ENDPOINT.'?'.http_build_query([
+				'rec'=>1,
+				'idsite'=>MATOMO_IDSITE,
+				'url'=>(empty($_SERVER['HTTPS']) ? 'http' : 'https').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'],
+				'urlref'=>$_SERVER['HTTP_REFERER']??'',
+			]); ?>' style='display:none' alt='' />
+		<?php } ?>
 	</head>
 	<body>
 		<h1>

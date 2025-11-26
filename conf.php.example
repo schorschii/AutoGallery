@@ -67,3 +67,10 @@ const DB_HOST = 'localhost';
 const DB_NAME = '';
 const DB_USER = '';
 const DB_PASS = '';
+
+/*
+	If you want to use the Matomo image tracker,
+	enter your Matomo installation details here.
+*/
+const MATOMO_ENDPOINT = null; // e.g. 'https://statistic.example.com/matomo.php'
+const MATOMO_IDSITE   = 1;
