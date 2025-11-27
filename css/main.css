@@ -260,10 +260,25 @@ input, textarea, select, button {
 	font-size: inherit;
 }
 
-#btnDownloadAll {
+a.button {
 	display: inline-flex;
 	vertical-align: middle;
 	justify-content: center;
+}
+a.button svg {
+	width: 28px;
+	height: 28px;
+}
+
+.animRotate {
+	animation-name: animateRotation;
+	animation-duration: 750ms;
+	animation-timing-function: ease-out;
+	animation-iteration-count: infinite;
+}
+@keyframes animateRotation {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -284,7 +299,7 @@ input, textarea, select, button {
 		background-color: rgba(0,0,0,0.8);
 	}
 	#lightboxControls svg,
-	#btnDownloadAll svg {
+	a.button svg {
 		fill: white;
 	}
 	#lightboxControls > a {

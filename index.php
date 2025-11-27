@@ -107,7 +107,7 @@ foreach($files as $file) {
 	];
 }
 
-// currently not used
+// download all as zip
 if(isset($_GET['zip'])) {
 	session_write_close();
 	$zip = new ZipArchive();
@@ -157,6 +157,17 @@ function urlencodePath($path) {
 					document.body.removeChild(a);
 				}
 			}
+			function loader(container) {
+				container.style.pointerEvents = 'none';
+				var prevInnerHTML = container.innerHTML;
+				container.innerHTML = divLoader.innerHTML;
+				let items = container.querySelectorAll('svg');
+				items[0].classList.add('animRotate');
+				setTimeout(() => {
+					container.innerHTML = prevInnerHTML;
+					container.style.opacity = '0.4';
+				}, 8000);
+			}
 		</script>
 		<?php if(defined('MATOMO_ENDPOINT') && MATOMO_ENDPOINT) { ?>
 			<img src='<?php echo MATOMO_ENDPOINT.'?'.http_build_query([
@@ -170,6 +181,17 @@ function urlencodePath($path) {
 	<body>
 		<h1>
 			<?php echo htmlspecialchars($folderTitle); ?>
+			<?php if(!empty($photos)) { ?>
+				<a id='btnDownloadAll' class='button' href='#' title='Download all (separate files)' onclick='downloadAll(); loader(this); return false;'>
+					<?php require('img/download-all.svg'); ?>
+				</a>
+				<a id='btnDownloadAllZip' class='button' href='?zip' title='Download all (ZIP archive)' onclick='loader(this);'>
+					<?php require('img/zip.svg'); ?>
+				</a>
+				<div id='divLoader' style='display:none'>
+					<?php require('img/loader.svg'); ?>
+				</div>
+			<?php } ?>
 		</h1>
 
 		<?php echo $descriptionHtml; ?>
