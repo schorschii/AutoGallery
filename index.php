@@ -157,7 +157,7 @@ function urlencodePath($path) {
 					document.body.removeChild(a);
 				}
 			}
-			function loader(container) {
+			function loader(container, enable=false, timeout=8000) {
 				container.style.pointerEvents = 'none';
 				var prevInnerHTML = container.innerHTML;
 				container.innerHTML = divLoader.innerHTML;
@@ -165,8 +165,11 @@ function urlencodePath($path) {
 				items[0].classList.add('animRotate');
 				setTimeout(() => {
 					container.innerHTML = prevInnerHTML;
-					container.style.opacity = '0.4';
-				}, 8000);
+					if(enable)
+						container.style.pointerEvents = 'all';
+					else
+						container.style.opacity = '0.4';
+				}, timeout);
 			}
 		</script>
 		<?php if(defined('MATOMO_ENDPOINT') && MATOMO_ENDPOINT) { ?>
@@ -279,28 +282,28 @@ function urlencodePath($path) {
 			<!-- top menu controls -->
 			<div id='lightboxControls'>
 				<a id='btnLightboxSlideshowPlay' onclick='lightboxSlideshowPlay()'>
-					<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 -960 960 960" fill="#000000"><path d="M292-172v-28h174v-120H192q-26 0-43-17t-17-43v-348q0-26 17-43t43-17h576q26 0 43 17t17 43v348q0 26-17 43t-43 17H494v120h174v28H292ZM160-380q0 12 10 22t22 10h576q12 0 22-10t10-22v-348q0-12-10-22t-22-10H192q-12 0-22 10t-10 22v348Zm0 0v-380 412-32Z"/><path d="m 381.7857,-400.54281 v -302.06733 l 237.10659,151.03366 z m 22.73625,-151.03367 z m 0,108.80921 172.14586,-108.80921 -172.14586,-108.8092 z"/></svg>
+					<?php require('img/play.svg'); ?>
 				</a>
 				<a id='btnLightboxSlideshowPause' onclick='lightboxSlideshowPause()' class='hidden'>
-					<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 -960 960 960" fill="#000000"><path d="M546-252v-456h162v456H546Zm-294 0v-456h162v456H252Zm322-28h106v-400H574v400Zm-294 0h106v-400H280v400Zm0-400v400-400Zm294 0v400-400Z"/></svg>
+					<?php require('img/pause.svg'); ?>
 				</a>
 				<a id='btnLightboxFullscreen' onclick='lightboxFullscreen()'>
-					<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 -960 960 960" fill="#000000"><path d="M172-172v-170h28v142h142v28H172Zm447 0v-28h142v-142h28v170H619ZM172-618v-170h170v28H200v142h-28Zm589 0v-142H619v-28h170v170h-28Z"/></svg>
+					<?php require('img/fullscreen.svg'); ?>
 				</a>
 				<a id='btnLightboxFullscreenExit' onclick='lightboxFullscreenExit()' class='hidden'>
-					<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 -960 960 960" fill="#000000"><path d="M314-172v-142H172v-28h170v170h-28Zm305 0v-170h170v28H647v142h-28ZM172-618v-28h142v-142h28v170H172Zm447 0v-170h28v142h142v28H619Z"/></svg>
+					<?php require('img/fullscreen-exit.svg'); ?>
 				</a>
-				<a id='btnLightboxDownload' download href=''>
-					<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 -960 960 960" fill="#000000"><path d="M480-342 356-466l20-20 90 90v-352h28v352l90-90 20 20-124 124ZM272-212q-26 0-43-17t-17-43v-90h28v90q0 12 10 22t22 10h416q12 0 22-10t10-22v-90h28v90q0 26-17 43t-43 17H272Z"/></svg>
+				<a id='btnLightboxDownload' download href='' onclick='loader(this, true, 1000)'>
+					<?php require('img/download.svg'); ?>
 				</a>
 				<a id='btnLightboxInfoOpen' onclick='lightboxInfoOpen()'>
-					<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 -960 960 960" fill="#000000"><path d="M172-332v-28h269v28H172Zm0-160v-28h426v28H172Zm0-160v-28h426v28H172Zm491 480v-213l166 107-166 106Z"/></svg>
+					<?php require('img/info.svg'); ?>
 				</a>
 				<a id='btnLightboxInfoClose' onclick='lightboxInfoClose()' class='hidden'>
-					<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 -960 960 960" fill="#000000"><path d="m 172,-332 v -28 h 269 v 28 z m 0,-160 v -28 h 426 v 28 z m 0,-160 v -28 h 426 v 28 z"/><path d="m 607.86442,-140.40677 -20,-20 104,-104 -104,-104 20,-20 104,104 104,-104 20,20 -104,104 104,104 -20,20 -104,-104 z"/></svg>
+					<?php require('img/info-close.svg'); ?>
 				</a>
 				<a id='btnLightboxClose' onclick='lightboxClose()'>
-					<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 -960 960 960" fill="#000000"><path d="m256-236-20-20 224-224-224-224 20-20 224 224 224-224 20 20-224 224 224 224-20 20-224-224-224 224Z"/></svg>
+					<?php require('img/close.svg'); ?>
 				</a>
 			</div>
 			<!-- prev/next buttons -->

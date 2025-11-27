@@ -265,10 +265,6 @@ a.button {
 	vertical-align: middle;
 	justify-content: center;
 }
-a.button svg {
-	width: 28px;
-	height: 28px;
-}
 
 .animRotate {
 	animation-name: animateRotation;
