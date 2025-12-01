@@ -54,4 +54,4 @@ media/
 If available, embedded chapters from video files can be extracted automatically using `ffprobe`. Make sure ffmpeg is installed and then set `VIDEO_EXTRACT_METADATA = true` in the config file.
 
 ### Statistics
-If you want to capture user statistics, you need to create a MySQL/MariaDB database and import the database schema from `sql/SCHEMA.sql`. Then, enter your database credentials in the `STAT_DB_*` constants in `conf.php`. And all requests will be logged into that database.
+If you want to capture visitor statistics, you can connect with a Matomo installation. For this, enter your Matomo credentials in the `MATOMO_*` constants in `conf.php`.
