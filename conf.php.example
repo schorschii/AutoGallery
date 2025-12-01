@@ -72,5 +72,6 @@ const DB_PASS = '';
 	If you want to use the Matomo image tracker,
 	enter your Matomo installation details here.
 */
-const MATOMO_ENDPOINT = null; // e.g. 'https://statistic.example.com/matomo.php'
-const MATOMO_IDSITE   = 1;
+const MATOMO_URL    = null; // e.g. 'https://statistic.example.com/'
+const MATOMO_IDSITE = 1;
+const MATOMO_TOKEN  = '';

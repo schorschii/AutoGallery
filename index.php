@@ -130,6 +130,16 @@ if(isset($_GET['zip'])) {
 	die();
 }
 
+// track page view
+if(defined('MATOMO_URL') && MATOMO_URL
+&& defined('MATOMO_IDSITE') && MATOMO_IDSITE) {
+	require_once('lib/MatomoTracker.php');
+	$matomoTracker = new MatomoTracker(MATOMO_IDSITE, MATOMO_URL);
+	$matomoTracker->setTokenAuth(MATOMO_TOKEN);
+	$matomoTracker->disableCookieSupport();
+	$matomoTracker->doTrackPageView($folderTitle);
+}
+
 function urlencodePath($path) {
 	$parts = explode('/', $path);
 	return implode('/', array_map('urlencode', $parts));
@@ -172,14 +182,6 @@ function urlencodePath($path) {
 				}, timeout);
 			}
 		</script>
-		<?php if(defined('MATOMO_ENDPOINT') && MATOMO_ENDPOINT) { ?>
-			<img src='<?php echo MATOMO_ENDPOINT.'?'.http_build_query([
-				'rec'=>1,
-				'idsite'=>MATOMO_IDSITE,
-				'url'=>(empty($_SERVER['HTTPS']) ? 'http' : 'https').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'],
-				'urlref'=>$_SERVER['HTTP_REFERER']??'',
-			]); ?>' style='display:none' alt='' />
-		<?php } ?>
 	</head>
 	<body>
 		<h1>
