@@ -107,9 +107,11 @@ foreach($files as $file) {
 if(isset($_GET['zip'])) {
 	session_write_close();
 	$zip = new ZipArchive();
-	$file = '/tmp/'.uniqid().'.zip';
-	if($zip->open($file, ZipArchive::CREATE) !== true)
+	$zipFile = '/tmp/'.uniqid().'.zip';
+	if($zip->open($zipFile, ZipArchive::CREATE) !== true)
 		throw new Exception('Unable to open temp zip file');
+
+	register_shutdown_function('unlink', $zipFile);
 
 	foreach($photos as $photo) {
 		$zip->addFile(ROOT_DIR.'/'.$photo['path'], $photo['filename']);
@@ -119,10 +121,9 @@ if(isset($_GET['zip'])) {
 
 	header('Content-Type: application/octet-stream');
 	header('Content-Transfer-Encoding: Binary');
-	header('Content-Length: '.filesize($file));
+	header('Content-Length: '.filesize($zipFile));
 	header('Content-Disposition: attachment; filename="'.$folderTitle.'.zip"');
-	readfile($file);
-	unlink($file);
+	readfile($zipFile);
 	die();
 }
 
