@@ -41,6 +41,8 @@ Enable `IMAGE_THUMBNAILS` in `conf.php` to generate cached JPEG previews when a 
 
 Requires PHP GD and write permission for the web server in each media folder. Thumbnails are stored in that folder's hidden `.thumbs` directory and served through the authenticated `media.php` endpoint. The gallery uses previews; the lightbox and individual and ZIP downloads use the originals. JPEG, PNG and static WebP are supported.
 
+With `ffmpeg` and `ffprobe` installed, the same setting also creates video posters from a frame one-third of the way through the video, using the same JPEG quality and maximum resolution. Custom video thumbnails take precedence.
+
 The first visit may take longer while previews are generated, subsequent visits reuse them. You can delete `.thumbs` directories to clear old entries and they will be recreated as needed.
 
 ### Videos with Chapters, Subtitles and Thumbnail

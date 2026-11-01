@@ -1,7 +1,7 @@
 <?php
 
 // Return a cached JPEG path, or null so callers can use the original image.
-function createImageThumbnail($file) {
+function createImageThumbnail($file, $thumbnail = null) {
 	if(!extension_loaded('gd') || !function_exists('imagejpeg')) return null;
 	$quality = max(0, min(100, (int)(defined('IMAGE_THUMBNAIL_QUALITY') ? IMAGE_THUMBNAIL_QUALITY : 80)));
 	$maxResolution = max(1, (int)(defined('IMAGE_THUMBNAIL_MAX_RESOLUTION') ? IMAGE_THUMBNAIL_MAX_RESOLUTION : 1920));
@@ -22,8 +22,8 @@ function createImageThumbnail($file) {
 		fclose($handle);
 		if(strlen($header) >= 21 && substr($header, 12, 4) == 'VP8X' && (ord($header[20]) & 2)) return null;
 	}
-	$directory = dirname($file).'/.thumbs';
-	$thumbnail = $directory.'/'.basename($file).'.jpg';
+	if($thumbnail === null) $thumbnail = dirname($file).'/.thumbs/'.basename($file).'.jpg';
+	$directory = dirname($thumbnail);
 	if(is_file($thumbnail) && filesize($thumbnail) > 0) return $thumbnail;
 	if(!is_dir($directory) && !mkdir($directory, 0755) && !is_dir($directory)) return null;
 
@@ -70,5 +70,36 @@ function createImageThumbnail($file) {
 		if($source) imagedestroy($source);
 		if($target) imagedestroy($target);
 		if($temp && is_file($temp)) @unlink($temp);
+	}
+}
+
+// Extract a frame one-third into the video, using the image preview JPEG settings.
+function createVideoThumbnail($file) {
+	$directory = dirname($file).'/.thumbs';
+	// Use a new cache name so older first-frame thumbnails are regenerated.
+	$thumbnail = $directory.'/'.basename($file).'.third.jpg';
+	if(is_file($thumbnail) && filesize($thumbnail) > 0) return $thumbnail;
+	if(!function_exists('exec') || !extension_loaded('gd')) return null;
+	if(!is_dir($directory) && !@mkdir($directory, 0755) && !is_dir($directory)) return null;
+	$temp = @tempnam($directory, '.video-');
+	if(!$temp) return null;
+	try {
+		$input = escapeshellarg(realpath($file));
+		exec('ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 '.$input.' 2>/dev/null', $durationOutput, $probeStatus);
+		$duration = trim(implode("\n", $durationOutput));
+		if($probeStatus !== 0 || !is_numeric($duration) || !is_finite((float)$duration) || (float)$duration <= 0) return null;
+		$timestamp = number_format((float)$duration / 3, 6, '.', '');
+		$maxResolution = max(1, (int)(defined('IMAGE_THUMBNAIL_MAX_RESOLUTION') ? IMAGE_THUMBNAIL_MAX_RESOLUTION : 1920));
+		$filter = "scale=w='min(iw,$maxResolution)':h='min(ih,$maxResolution)':force_original_aspect_ratio=decrease";
+		$command = 'ffmpeg -nostdin -hide_banner -loglevel error -y -ss '.escapeshellarg($timestamp).' -i '.$input
+			.' -map 0:v:0 -frames:v 1 -vf '.escapeshellarg($filter)
+			.' -c:v png -f image2 -update 1 '.escapeshellarg($temp).' 2>/dev/null';
+		exec($command, $output, $status);
+		if($status !== 0) return null;
+		return createImageThumbnail($temp, $thumbnail);
+	} catch(Throwable $error) {
+		return null;
+	} finally {
+		if(is_file($temp)) @unlink($temp);
 	}
 }

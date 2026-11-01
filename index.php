@@ -94,6 +94,10 @@ foreach($files as $file) {
 		foreach(glob($metadataDir.'/thumbnail.*') as $thumb) {
 			$photo['thumbnail'] = substr($thumb, strlen(ROOT_DIR)+1);
 		}
+		if(!$photo['thumbnail'] && !isset($_GET['zip']) && defined('IMAGE_THUMBNAILS') && IMAGE_THUMBNAILS) {
+			$thumbnail = createVideoThumbnail($searchPath.'/'.$file);
+			if($thumbnail !== null) $photo['thumbnail'] = substr($thumbnail, strlen(ROOT_DIR)+1);
+		}
 	}
 	$photos[] = $photo;
 }
@@ -229,7 +233,7 @@ function urlencodePath($path) {
 					<a class='video-item' href='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'>
 						<video
 						src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'
-						poster='<?php if($photo['thumbnail']) echo htmlspecialchars($pathPrefix.$photo['thumbnail'],ENT_QUOTES); ?>'
+						poster='<?php if($photo['thumbnail']) echo htmlspecialchars($pathPrefix.urlencodePath($photo['thumbnail']),ENT_QUOTES); ?>'
 						media_src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'
 						media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>'
 						media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>'

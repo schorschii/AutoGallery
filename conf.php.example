@@ -25,7 +25,8 @@ const PASSWORD = '';
 const ROOT_DIR = 'media';
 
 /*
-	Generate JPEG thumbnails on the first gallery page load (requires PHP GD).
+	Generate image and video JPEG thumbnails on the first gallery page load.
+	Requires PHP GD; video thumbnails additionally require ffmpeg/ffprobe and PHP exec.
 	Cached in a .thumbs folder inside each media directory; originals stay unchanged.
 	Maximum resolution is the longest edge in pixels (smaller images are not enlarged).
 */
