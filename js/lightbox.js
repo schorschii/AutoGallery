@@ -161,7 +161,7 @@ function lightboxClose() {
 function lightboxNext(step, manual = false) {
 	if(!lightboxSlides.length) return;
 	const request = ++lightboxImageRequest;
-	lightboxSetLoading(false);
+	lightboxSetLoading(manual);
 	lightboxVideo.pause();
 
 	if(lightboxSlideIndex + step >= lightboxSlides.length) {
@@ -181,6 +181,7 @@ function lightboxNext(step, manual = false) {
 
 	// setup video or img element
 	if(lightboxSlides[lightboxSlideIndex].tagName == 'VIDEO') {
+		lightboxSetLoading(false);
 		// remove prev text tracks
 		// creating a new video element is necessary for working chapters in Firefox
 		let element = document.getElementById('lightboxVideo');
@@ -240,14 +241,23 @@ function lightboxNext(step, manual = false) {
 	} else {
 		lightboxVideo.classList.add('hidden');
 		lightboxImg.classList.remove('hidden');
-		lightboxImg.src = lightboxSlides[lightboxSlideIndex].getAttribute('media_src');
-		if(manual && !lightboxImg.complete) {
-			lightboxSetLoading(true);
-			// decode settles on load or failure; older requests must not hide a newer spinner.
-			const finished = function() {
-				if(request === lightboxImageRequest) lightboxSetLoading(false);
-			};
-			lightboxImg.decode().then(finished, finished);
+		const source = lightboxSlides[lightboxSlideIndex].getAttribute('media_src');
+		const loadImage = function() {
+			if(request !== lightboxImageRequest) return;
+			lightboxImg.src = source;
+			if(manual) {
+				// Older requests must not hide a newer spinner.
+				const finished = function() {
+					if(request === lightboxImageRequest) lightboxSetLoading(false);
+				};
+				lightboxImg.decode().then(finished, finished);
+			}
+		};
+		if(manual) {
+			// Give the browser a paint opportunity before starting the image request.
+			requestAnimationFrame(() => requestAnimationFrame(loadImage));
+		} else {
+			loadImage();
 		}
 	}
 
