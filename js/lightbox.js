@@ -165,7 +165,7 @@ function lightboxNext(step) {
 	}
 
 	// setup download btn
-	btnLightboxDownload.href = lightboxSlides[lightboxSlideIndex].src;
+	btnLightboxDownload.href = lightboxSlides[lightboxSlideIndex].getAttribute('media_src');
 	btnLightboxDownload.download = lightboxSlides[lightboxSlideIndex].getAttribute('media_filename');
 
 	// setup video or img element
@@ -229,7 +229,7 @@ function lightboxNext(step) {
 	} else {
 		lightboxVideo.classList.add('hidden');
 		lightboxImg.classList.remove('hidden');
-		lightboxImg.src = lightboxSlides[lightboxSlideIndex].src;
+		lightboxImg.src = lightboxSlides[lightboxSlideIndex].getAttribute('media_src');
 	}
 
 	// update text

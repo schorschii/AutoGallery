@@ -1,6 +1,7 @@
 <?php
 require_once('conf.php');
 require_once('session.php');
+require_once('lib/thumbnail.php');
 
 $photos = [];
 $dirs = [];
@@ -51,6 +52,10 @@ foreach($files as $file) {
 		'thumbnail' => null,
 	];
 	if(startsWith($photo['type'], 'image/')) {
+		if(!isset($_GET['zip']) && defined('IMAGE_THUMBNAILS') && IMAGE_THUMBNAILS) {
+			$thumbnail = createImageThumbnail($searchPath.'/'.$file);
+			if($thumbnail !== null) $photo['thumbnail'] = substr($thumbnail, strlen(ROOT_DIR)+1);
+		}
 		$size = getimagesize($searchPath.'/'.$file, $info);
 		if(isset($info['APP13'])) { // read IPTC tags
 			$iptcData = iptcparse($info['APP13']);
@@ -217,7 +222,7 @@ function urlencodePath($path) {
 				<?php if(startsWith($photo['type'], 'image/')) { ?>
 					<a class='photo-item' href='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'>
 						<img loading='lazy'
-						src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'
+						src='<?php echo htmlspecialchars($photo['thumbnail'] ? $pathPrefix.urlencodePath($photo['thumbnail']) : $mediaPath,ENT_QUOTES); ?>'
 						media_src='<?php echo htmlspecialchars($mediaPath,ENT_QUOTES); ?>'
 						media_title='<?php echo htmlspecialchars($photo['title'],ENT_QUOTES); ?>'
 						media_subtitle='<?php echo htmlspecialchars($photo['subtitle'],ENT_QUOTES); ?>'

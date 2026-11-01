@@ -33,6 +33,13 @@ You can display a descriptive text to each folder by creating a file `index.html
 ### Hide Folders
 You can hide folders the common Unix way by adding a "." at the beginning of the folder name. The folder is still accessible!
 
+### Image Thumbnails
+Enable `IMAGE_THUMBNAILS` in `conf.php` to generate cached JPEG previews when a gallery folder is first opened. Set `IMAGE_THUMBNAIL_QUALITY` (0-100, default `80`) and `IMAGE_THUMBNAIL_MAX_RESOLUTION` (longest edge in pixels, default `1920`). Aspect ratio is preserved and smaller images are not enlarged.
+
+Requires PHP GD and write permission for the web server in each media folder. Thumbnails are stored in that folder's hidden `.thumbs` directory and served through the authenticated `media.php` endpoint. The gallery uses previews; the lightbox and individual and ZIP downloads use the originals. JPEG, PNG and static WebP are supported.
+
+The first visit may take longer while previews are generated, subsequent visits reuse them. You can delete `.thumbs` directories to clear old entries and they will be recreated as needed.
+
 ### Videos with Chapters, Subtitles and Thumbnail
 Video subtitles and chapters are read by Browsers from .vtt files. If you want to add such to a video, you need to create a folder with the same name as the video file (without file extension). Inside this folder, place your .vtt files with the following file name schema.
 - Subtitles: `subtitles.<LANGCODE>.vtt`, e.g. `subtitles.de.vtt`

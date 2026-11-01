@@ -25,6 +25,15 @@ const PASSWORD = '';
 const ROOT_DIR = 'media';
 
 /*
+	Generate JPEG thumbnails on the first gallery page load (requires PHP GD).
+	Cached in a .thumbs folder inside each media directory; originals stay unchanged.
+	Maximum resolution is the longest edge in pixels (smaller images are not enlarged).
+*/
+const IMAGE_THUMBNAILS = false;
+const IMAGE_THUMBNAIL_QUALITY = 80; // 0-100
+const IMAGE_THUMBNAIL_MAX_RESOLUTION = 1920;
+
+/*
 	Define what should be displayed as image title and subtile.
 	You can use FILENAME.EXT or FILENAME to display the respective file name with or without extension.
 	Enter the ID of an IPTC tag to display the IPTC field value, e.g. '2#120' for the Caption.
