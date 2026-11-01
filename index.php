@@ -111,18 +111,8 @@ foreach($files as $file) {
 // download all as zip
 if(isset($_GET['zip'])) {
 	session_write_close();
-	$zip = new ZipArchive();
-	$zipFile = '/tmp/'.uniqid().'.zip';
-	if($zip->open($zipFile, ZipArchive::CREATE) !== true)
-		throw new Exception('Unable to open temp zip file');
-
-	register_shutdown_function('unlink', $zipFile);
-
-	foreach($photos as $photo) {
-		$zip->addFile(ROOT_DIR.'/'.$photo['path'], $photo['filename']);
-		$zip->setCompressionName(ROOT_DIR.'/'.$photo['path'], ZipArchive::CM_STORE);
-	}
-	$zip->close();
+	require_once('lib/zip.php');
+	$zipFile = galleryZip($searchPath, $photos);
 
 	header('Content-Type: application/octet-stream');
 	header('Content-Transfer-Encoding: Binary');
