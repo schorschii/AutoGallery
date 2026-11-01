@@ -244,14 +244,27 @@ function lightboxNext(step, manual = false) {
 		const source = lightboxSlides[lightboxSlideIndex].getAttribute('media_src');
 		const loadImage = function() {
 			if(request !== lightboxImageRequest) return;
-			lightboxImg.src = source;
+			lightboxImg.onload = null;
+			lightboxImg.onerror = null;
 			if(manual) {
-				// Older requests must not hide a newer spinner.
 				const finished = function() {
 					if(request === lightboxImageRequest) lightboxSetLoading(false);
 				};
-				lightboxImg.decode().then(finished, finished);
+				lightboxImg.onerror = finished;
+				lightboxImg.onload = function() {
+					if(request !== lightboxImageRequest) return;
+					// Wait for load first: decode() can reject while a new source is pending.
+					const displayed = function() {
+						requestAnimationFrame(() => requestAnimationFrame(finished));
+					};
+					if(typeof lightboxImg.decode === 'function') {
+						lightboxImg.decode().then(displayed, displayed);
+					} else {
+						displayed();
+					}
+				};
 			}
+			lightboxImg.src = source;
 		};
 		if(manual) {
 			// Give the browser a paint opportunity before starting the image request.
