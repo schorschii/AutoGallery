@@ -25,6 +25,10 @@ document.addEventListener('DOMContentLoaded', function() {
 					lightboxSlideIndex = i;
 				}
 			}
+			// Clear the previous session's image before opening a new one.
+			lightboxImg.onload = null;
+			lightboxImg.onerror = null;
+			lightboxImg.removeAttribute('src');
 			lightboxNext(0);
 			lightboxShow(this);
 		});
