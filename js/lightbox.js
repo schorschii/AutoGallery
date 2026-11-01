@@ -1,6 +1,12 @@
 const LIGHTBOX_ANIM_DURATION = 600;
 var lightboxSlideIndex = 0;
 var lightboxSlides = [];
+var lightboxImageRequest = 0;
+
+function lightboxSetLoading(loading) {
+	document.getElementById('lightboxLoading').classList.toggle('hidden', !loading);
+	lightboxImg.setAttribute('aria-busy', loading ? 'true' : 'false');
+}
 
 document.addEventListener('DOMContentLoaded', function() {
 	var elements = gallery.querySelectorAll('.photo-item, .video-item');
@@ -27,10 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('keydown', function(event) {
 	// arrow left + arrow right - prev/next image
 	if((event.which || event.keyCode) == 37) {
-		lightboxNext(-1);
+		if(lightbox.style.display == 'block') lightboxNext(-1, true);
 	}
 	if((event.which || event.keyCode) == 39) {
-		lightboxNext(1);
+		if(lightbox.style.display == 'block') lightboxNext(1, true);
 	}
 	// esc - close lightbox
 	if((event.which || event.keyCode) == 27) {
@@ -108,6 +114,8 @@ function lightboxShow(element) {
 }
 
 function lightboxClose() {
+	++lightboxImageRequest;
+	lightboxSetLoading(false);
 	lightboxSlideshowPause();
 
 	let maximizeElement = lightboxImg;
@@ -150,7 +158,10 @@ function lightboxClose() {
 	lightboxFullscreenExit();
 }
 
-function lightboxNext(step) {
+function lightboxNext(step, manual = false) {
+	if(!lightboxSlides.length) return;
+	const request = ++lightboxImageRequest;
+	lightboxSetLoading(false);
 	lightboxVideo.pause();
 
 	if(lightboxSlideIndex + step >= lightboxSlides.length) {
@@ -230,6 +241,14 @@ function lightboxNext(step) {
 		lightboxVideo.classList.add('hidden');
 		lightboxImg.classList.remove('hidden');
 		lightboxImg.src = lightboxSlides[lightboxSlideIndex].getAttribute('media_src');
+		if(manual && !lightboxImg.complete) {
+			lightboxSetLoading(true);
+			// decode settles on load or failure; older requests must not hide a newer spinner.
+			const finished = function() {
+				if(request === lightboxImageRequest) lightboxSetLoading(false);
+			};
+			lightboxImg.decode().then(finished, finished);
+		}
 	}
 
 	// update text

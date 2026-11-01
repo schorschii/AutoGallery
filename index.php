@@ -272,6 +272,9 @@ function urlencodePath($path) {
 			<!-- main content elements -->
 			<img id='lightboxImg'></img>
 			<video id='lightboxVideo' controls></video>
+			<div id='lightboxLoading' class='hidden' role='status' aria-label='Loading image'>
+				<div class='animRotate'><?php require('img/loader.svg'); ?></div>
+			</div>
 			<!-- caption text -->
 			<div id='lightboxCaptionContainer'>
 				<div id='lightboxCaptionTitle'></div>
@@ -305,8 +308,8 @@ function urlencodePath($path) {
 				</a>
 			</div>
 			<!-- prev/next buttons -->
-			<a id='btnLightboxPrev' onclick='lightboxNext(-1)'>&#10094;</a>
-			<a id='btnLightboxNext' onclick='lightboxNext(1)'>&#10095;</a>
+			<a id='btnLightboxPrev' onclick='lightboxNext(-1, true)'>&#10094;</a>
+			<a id='btnLightboxNext' onclick='lightboxNext(1, true)'>&#10095;</a>
 		</div>
 
 		<div id='footer'>
