@@ -146,9 +146,9 @@ function urlencodePath($path) {
 	<head>
 		<meta charset='utf-8'>
 		<title><?php echo htmlspecialchars($folderTitle); ?></title>
-		<link rel='stylesheet' type='text/css' href='<?php echo str_repeat('../', $pathDepth); ?>css/main.css?v=2' />
+		<link rel='stylesheet' type='text/css' href='<?php echo str_repeat('../', $pathDepth); ?>css/main.css?v=3' />
 		<script src='<?php echo str_repeat('../', $pathDepth); ?>js/3dfx.js'></script>
-		<script src='<?php echo str_repeat('../', $pathDepth); ?>js/lightbox.js'></script>
+		<script src='<?php echo str_repeat('../', $pathDepth); ?>js/lightbox.js?v=3'></script>
 		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 		<script>
 			function downloadAll() {
