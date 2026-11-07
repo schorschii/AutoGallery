@@ -77,7 +77,7 @@ function createImageThumbnail($file, $thumbnail = null) {
 function createVideoThumbnail($file) {
 	$directory = dirname($file).'/.thumbs';
 	// Use a new cache name so older first-frame thumbnails are regenerated.
-	$thumbnail = $directory.'/'.basename($file).'.third.jpg';
+	$thumbnail = $directory.'/'.basename($file).'.jpg';
 	if(is_file($thumbnail) && filesize($thumbnail) > 0) return $thumbnail;
 	if(!function_exists('exec') || !extension_loaded('gd')) return null;
 	if(!is_dir($directory) && !@mkdir($directory, 0755) && !is_dir($directory)) return null;

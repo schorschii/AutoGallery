@@ -18,10 +18,9 @@ function formatSeconds($seconds) {
 	return str_pad($h,1,'0',STR_PAD_LEFT).':'.str_pad($m,2,'0',STR_PAD_LEFT).':'.str_pad($s,2,'0',STR_PAD_LEFT).'.'.$milliSeconds;
 }
 
-function extractSubtitlesVtt($videoFile) {
+function extractChaptersVtt($videoFile) {
 	if(!existsCommand('ffprobe')) return [];
 	$return = shell_exec('ffprobe -show_chapters -print_format json '.escapeshellarg($videoFile));
-	$vttChapters = [];
 	$chapterData = json_decode($return, true)['chapters'];
 	if(!empty($chapterData)) {
 		$vttContent = 'WEBVTT'."\n\n";
@@ -31,7 +30,6 @@ function extractSubtitlesVtt($videoFile) {
 			$vttContent .= $start.' --> '.$end."\n";
 			$vttContent .= $chapter['tags']['title']."\n\n";
 		}
-		$vttChapters['chapters'] = $vttContent;
 	}
-	return $vttChapters;
+	return $vttContent;
 }

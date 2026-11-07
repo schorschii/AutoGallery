@@ -46,21 +46,22 @@ With `ffmpeg` and `ffprobe` installed, the same setting also creates video poste
 The first visit may take longer while previews are generated, subsequent visits reuse them. You can delete `.thumbs` directories to clear old entries and they will be recreated as needed.
 
 ### Videos with Chapters, Subtitles and Thumbnail
-Video subtitles and chapters are read by Browsers from .vtt files. If you want to add such to a video, you need to create a folder with the same name as the video file (without file extension). Inside this folder, place your .vtt files with the following file name schema.
-- Subtitles: `subtitles.<LANGCODE>.vtt`, e.g. `subtitles.de.vtt`
-- Chapters: `chapters.<LANGCODE>.vtt`
+Video subtitles and chapters are read by Browsers from .vtt files. If you want to add such to a video, you need to place a .vtt file using the following file name schema inside the `.thumbs` dir:
+- Subtitles: `<FILENAME>.subtitles.<LANGCODE>.vtt`, e.g. `myvideo.subtitles.de.vtt`
+- Chapters: `<FILENAME>.chapters.<LANGCODE>.vtt`, e.g. `myvideo.chapters.en.vtt`
 
-If you want to show a custom thumbnail, place a file called `thumbnail.jpg` in this folder.
+- `<FILENAME>`: name of the corresponding video file (without file extension)
+- `<LANGCODE>`: 2-char language code
 
 A file tree could look like this:
 ```
 media/
 - myvideo.mp4
-- myvideo/
--- subtitles.en.vtt
--- subtitles.de.vtt
--- chapters.en.vtt
--- thumbnail.jpg
+- .thumbs/
+-- myvideo.subtitles.en.vtt
+-- myvideo.subtitles.de.vtt
+-- myvideo.chapters.en.vtt
+-- myvideo.mp4.jpg
 ```
 
 If available, embedded chapters from video files can be extracted automatically using `ffprobe`. Make sure ffmpeg is installed and then set `VIDEO_EXTRACT_METADATA = true` in the config file.

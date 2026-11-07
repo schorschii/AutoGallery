@@ -68,32 +68,31 @@ foreach($files as $file) {
 		}
 	}
 	if(startsWith($photo['type'], 'video/')) {
-		$metadataDir = $searchPath.'/'.pathinfo($file, PATHINFO_FILENAME);
-		$ignoreDirs[] = $metadataDir;
 		// start chapter extraction if enabled and not already done
-		if(VIDEO_EXTRACT_METADATA && !file_exists($metadataDir)) {
+		$metadataDir = $searchPath.'/.thumbs';
+		if(VIDEO_EXTRACT_METADATA) {
 			require_once('lib/video.php');
-			@mkdir($metadataDir);
+			if(!file_exists($metadataDir)) mkdir($metadataDir);
 			// proceed only if dir could be created (skip e.g. in case of permission errors)
 			if(file_exists($metadataDir)) {
-				foreach(extractSubtitlesVtt($searchPath.'/'.$file) as $vttName => $vttContent) {
-					file_put_contents($metadataDir.'/'.$vttName.'.en.vtt', $vttContent);
+				$chaptersFile = $metadataDir.'/'.pathinfo($file, PATHINFO_FILENAME).'.chapters.en.vtt';
+				if(!file_exists($chaptersFile)) {
+					$chaptersContent = extractChaptersVtt($searchPath.'/'.$file);
+					file_put_contents($chaptersFile, $chaptersContent);
 				}
 			}
 		}
-		// search for existing video metatdate/chapters
-		foreach(glob($metadataDir.'/*.vtt') as $vttfile) {
+		// search for existing video metatdata/chapters
+		foreach(glob($metadataDir.'/'.pathinfo($file, PATHINFO_FILENAME).'.*.vtt') as $vttfile) {
 			$splitter = explode('.', basename($vttfile));
-			if(count($splitter) != 3) continue;
+			if(count($splitter) != 4) continue;
 			$photo['tracks'][] = [
 				'path' => substr($vttfile, strlen(ROOT_DIR)+1),
-				'kind' => $splitter[0],
-				'srclang' => $splitter[1],
+				'kind' => $splitter[1],
+				'srclang' => $splitter[2],
 			];
 		}
-		foreach(glob($metadataDir.'/thumbnail.*') as $thumb) {
-			$photo['thumbnail'] = substr($thumb, strlen(ROOT_DIR)+1);
-		}
+		// create video thumbnail
 		if(!$photo['thumbnail'] && !isset($_GET['zip']) && defined('IMAGE_THUMBNAILS') && IMAGE_THUMBNAILS) {
 			$thumbnail = createVideoThumbnail($searchPath.'/'.$file);
 			if($thumbnail !== null) $photo['thumbnail'] = substr($thumbnail, strlen(ROOT_DIR)+1);
